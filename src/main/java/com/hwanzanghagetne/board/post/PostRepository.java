@@ -1,4 +1,4 @@
-package com.hwanzanghagetne.board;
+package com.hwanzanghagetne.board.post;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

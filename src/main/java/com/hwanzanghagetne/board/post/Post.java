@@ -1,4 +1,4 @@
-package com.hwanzanghagetne.board;
+package com.hwanzanghagetne.board.post;
 
 import com.hwanzanghagetne.board.member.Member;
 import jakarta.persistence.*;

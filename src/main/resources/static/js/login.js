@@ -14,6 +14,7 @@ document
 
     if (response.ok) {
       document.getElementById("message").textContent = "로그인 성공!";
+      window.location.href = "write.html";
     } else {
       document.getElementById("message").textContent = "로그인 실패";
     }
