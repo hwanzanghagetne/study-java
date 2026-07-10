@@ -30,3 +30,11 @@ button {
   padding: 0.5rem;
   cursor: pointer;
 }
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: #555;
+  text-decoration: none;
+}

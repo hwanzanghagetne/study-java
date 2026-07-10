@@ -14,8 +14,8 @@ document
 
     if (response.ok) {
       const postId = await response.json();
-      document.getElementById("message").textContent =
-        `작성 완료! 게시글 번호: ${postId}`;
+      document.getElementById("message").textContent = "작성 완료!";
+      window.location.href = `post-detail.html?id=${postId}`;
     } else {
       document.getElementById("message").textContent =
         `작성 실패 (상태코드: ${response.status})`;

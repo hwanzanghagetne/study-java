@@ -4,6 +4,8 @@ import com.hwanzanghagetne.board.member.Member;
 import com.hwanzanghagetne.board.member.MemberRepository;
 import com.hwanzanghagetne.board.post.dto.PostResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +47,19 @@ public class PostService {
                 post.getCreatedAt(),
                 post.getUpdatedAt()
         );
+    }
 
+    @Transactional(readOnly = true)
+    public Page<PostResponse> readPosts(Pageable pageable) {
+        Page<Post> posts = postRepository.findAll(pageable);
+        return posts.map(post -> new PostResponse(
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                post.getViewCount(),
+                post.getMember().getNickname(),
+                post.getCreatedAt(),
+                post.getUpdatedAt()
+        ));
     }
 }
