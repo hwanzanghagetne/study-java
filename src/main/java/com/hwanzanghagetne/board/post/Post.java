@@ -44,4 +44,13 @@ public class Post {
         this.title = title;
         this.content = content;
     }
+
+    public void updateContent(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    public void increaseViewCount() {
+        this.viewCount++;
+    }
 }

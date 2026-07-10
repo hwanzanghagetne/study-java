@@ -1,4 +1,4 @@
-package com.hwanzanghagetne.board;
+package com.hwanzanghagetne.board.config;
 
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/members/signup", "/api/members/login").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/login.html", "/signup.html").permitAll()
+                        .requestMatchers("/", "/index.html", "/login.html", "/signup.html").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();

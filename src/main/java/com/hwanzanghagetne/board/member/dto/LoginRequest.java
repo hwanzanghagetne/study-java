@@ -1,4 +1,8 @@
 package com.hwanzanghagetne.board.member.dto;
 
-public record LoginRequest(String loginId, String password) {
+import jakarta.validation.constraints.NotBlank;
+
+public record LoginRequest(
+        @NotBlank String loginId,
+        @NotBlank String password) {
 }

@@ -1,6 +1,8 @@
 package com.hwanzanghagetne.board.member;
 
 
+import com.hwanzanghagetne.board.exception.BusinessException;
+import com.hwanzanghagetne.board.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,7 @@ public class MemberService {
     public Long signup(String loginId, String password, String name, String nickname, String email) {
 
         if (memberRepository.findByLoginId(loginId).isPresent()) {
-            throw new IllegalStateException();
+            throw new BusinessException(ErrorCode.DUPLICATE_LOGIN_ID);
         }
         String encoded = passwordEncoder.encode(password);
         Member member = Member.builder()

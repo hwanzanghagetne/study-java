@@ -17,6 +17,31 @@ async function loadPost() {
   const createdAt = new Date(post.createdAt).toLocaleString();
   document.getElementById("meta").textContent =
     `${post.authorNickname} · 조회 ${post.viewCount} · ${createdAt}`;
+
+  const meResponse = await fetch("/api/members/me");
+  if (meResponse.ok) {
+    const myLoginId = await meResponse.text();
+    if (myLoginId === post.authorLoginId) {
+      document.getElementById("authorActions").style.display = "block";
+      document.getElementById("editLink").href = `write.html?id=${postId}`;
+    }
+  }
 }
+
+document.getElementById("deleteBtn").addEventListener("click", async () => {
+  if (!confirm("정말 삭제하시겠습니까?")) {
+    return;
+  }
+
+  const response = await fetch(`/api/posts/${postId}`, { method: "DELETE" });
+
+  if (response.ok) {
+    window.location.href = "board.html";
+  } else {
+    const error = await response.json();
+    document.getElementById("message").textContent =
+      error.message || `삭제 실패 (상태코드: ${response.status})`;
+  }
+});
 
 loadPost();

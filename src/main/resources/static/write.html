@@ -8,11 +8,11 @@
 <body>
     <div class="write-box">
         <a href="board.html" class="back-link">← 목록으로</a>
-        <h1>게시글 작성</h1>
+        <h1 id="pageTitle">게시글 작성</h1>
         <form id="writeForm">
             <input type="text" id="title" placeholder="제목" required>
             <textarea id="content" placeholder="내용" rows="8" required></textarea>
-            <button type="submit">작성</button>
+            <button type="submit" id="submitBtn">작성</button>
         </form>
         <p id="message"></p>
     </div>

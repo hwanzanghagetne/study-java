@@ -39,4 +39,9 @@ document.getElementById("nextBtn").addEventListener("click", () => {
   loadPosts(currentPage + 1);
 });
 
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await fetch("/api/members/logout", { method: "POST" });
+  window.location.href = "login.html";
+});
+
 loadPosts(0);

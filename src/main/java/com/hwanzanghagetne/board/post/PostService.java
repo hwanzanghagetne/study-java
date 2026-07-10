@@ -1,5 +1,7 @@
 package com.hwanzanghagetne.board.post;
 
+import com.hwanzanghagetne.board.exception.BusinessException;
+import com.hwanzanghagetne.board.exception.ErrorCode;
 import com.hwanzanghagetne.board.member.Member;
 import com.hwanzanghagetne.board.member.MemberRepository;
 import com.hwanzanghagetne.board.post.dto.PostResponse;
@@ -22,7 +24,7 @@ public class PostService {
     public Long createPost(String loginId, String title, String content) {
 
         Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new IllegalStateException("회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
         Post post = Post.builder()
                 .member(member)
@@ -34,15 +36,17 @@ public class PostService {
         return savedPost.getId();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PostResponse readPost(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
+        post.increaseViewCount();
         return new PostResponse(
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
                 post.getViewCount(),
+                post.getMember().getLoginId(),
                 post.getMember().getNickname(),
                 post.getCreatedAt(),
                 post.getUpdatedAt()
@@ -51,15 +55,38 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public Page<PostResponse> readPosts(Pageable pageable) {
-        Page<Post> posts = postRepository.findAll(pageable);
+        Page<Post> posts = postRepository.findAllWithMember(pageable);
         return posts.map(post -> new PostResponse(
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
                 post.getViewCount(),
+                post.getMember().getLoginId(),
                 post.getMember().getNickname(),
                 post.getCreatedAt(),
                 post.getUpdatedAt()
         ));
+    }
+
+    @Transactional
+    public void updatePost(Long postId, String loginId, String title, String content) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
+
+        if (!post.getMember().getLoginId().equals(loginId)) {
+            throw new BusinessException(ErrorCode.NOT_AUTHOR);
+        }
+        post.updateContent(title,content);
+    }
+
+    @Transactional
+    public void deletePost(Long postId, String loginId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
+
+        if (!post.getMember().getLoginId().equals(loginId)) {
+            throw new BusinessException(ErrorCode.NOT_AUTHOR);
+        }
+
+        postRepository.delete(post);
     }
 }
