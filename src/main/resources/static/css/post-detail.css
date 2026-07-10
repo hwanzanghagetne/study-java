@@ -54,3 +54,63 @@ body {
     color: #c0392b;
     border-color: #c0392b;
 }
+
+.comment-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
+
+#commentList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+
+#commentList li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: #333;
+}
+
+.comment-content {
+    margin: 0.4rem 0 0 0;
+    white-space: pre-wrap;
+    line-height: 1.4;
+}
+
+.comment-delete-btn {
+    margin-left: auto;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.75rem;
+    border: 1px solid #ccc;
+    background: white;
+    color: #c0392b;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#commentForm textarea {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+#commentForm button {
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+}

@@ -1,5 +1,8 @@
 package com.hwanzanghagetne.board.post;
 
+import com.hwanzanghagetne.board.comment.CommentService;
+import com.hwanzanghagetne.board.comment.dto.CommentResponse;
+import com.hwanzanghagetne.board.comment.dto.CreateCommentRequest;
 import com.hwanzanghagetne.board.post.dto.CreatePostRequest;
 import com.hwanzanghagetne.board.post.dto.PostResponse;
 import com.hwanzanghagetne.board.post.dto.UpdatePostRequest;
@@ -12,12 +15,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
+    private final CommentService commentService;
 
     @PostMapping
     public ResponseEntity<Long> createPost(@Valid @RequestBody CreatePostRequest request, Authentication authentication) {
@@ -47,4 +53,6 @@ public class PostController {
         postService.deletePost(id, authentication.getName());
         return ResponseEntity.noContent().build();
     }
+
+
 }
