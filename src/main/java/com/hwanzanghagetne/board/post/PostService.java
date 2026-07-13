@@ -76,7 +76,7 @@ public class PostService {
         if (!post.getMember().getLoginId().equals(loginId)) {
             throw new BusinessException(ErrorCode.NOT_AUTHOR);
         }
-        post.updateContent(title,content);
+        post.updateContent(title, content);
     }
 
     @Transactional
@@ -88,5 +88,20 @@ public class PostService {
         }
 
         postRepository.delete(post);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PostResponse> getMyPosts(String loginId, Pageable pageable) {
+        Page<Post> posts = postRepository.findByMemberLoginId(loginId, pageable);
+        return posts.map(post -> new PostResponse(
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                post.getViewCount(),
+                post.getMember().getLoginId(),
+                post.getMember().getNickname(),
+                post.getCreatedAt(),
+                post.getUpdatedAt()
+        ));
     }
 }

@@ -2,10 +2,14 @@ package com.hwanzanghagetne.board.member;
 
 import com.hwanzanghagetne.board.member.dto.LoginRequest;
 import com.hwanzanghagetne.board.member.dto.SignupRequest;
+import com.hwanzanghagetne.board.post.PostService;
+import com.hwanzanghagetne.board.post.dto.PostResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+    private final PostService postService;
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/signup")
@@ -63,8 +68,14 @@ public class MemberController {
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("/me")
     public ResponseEntity<String> me(Authentication authentication) {
         return ResponseEntity.ok(authentication.getName());
+    }
+
+    @GetMapping("/me/posts")
+    public Page<PostResponse> getMyPage(Authentication authentication, Pageable pageable) {
+        return postService.getMyPosts(authentication.getName(), pageable);
     }
 }
