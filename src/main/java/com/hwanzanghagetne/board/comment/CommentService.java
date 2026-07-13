@@ -39,7 +39,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public List<CommentResponse> getComments(Long postId) {
-        List<Comment> comments = commentRepository.findByPostId(postId);
+        List<Comment> comments = commentRepository.findByPostIdWithMember(postId);
 
         return comments.stream()
                 .map(comment -> new CommentResponse(
