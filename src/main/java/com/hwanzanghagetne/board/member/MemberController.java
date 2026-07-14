@@ -1,7 +1,10 @@
 package com.hwanzanghagetne.board.member;
 
+import com.hwanzanghagetne.board.member.dto.ChangePasswordRequest;
 import com.hwanzanghagetne.board.member.dto.LoginRequest;
+import com.hwanzanghagetne.board.member.dto.MemberResponse;
 import com.hwanzanghagetne.board.member.dto.SignupRequest;
+import com.hwanzanghagetne.board.member.dto.UpdateProfileRequest;
 import com.hwanzanghagetne.board.post.PostService;
 import com.hwanzanghagetne.board.post.dto.PostResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -74,8 +77,25 @@ public class MemberController {
         return ResponseEntity.ok(authentication.getName());
     }
 
+    @GetMapping("/me/profile")
+    public MemberResponse getProfile(Authentication authentication) {
+        return memberService.getProfile(authentication.getName());
+    }
+
     @GetMapping("/me/posts")
     public Page<PostResponse> getMyPage(Authentication authentication, Pageable pageable) {
         return postService.getMyPosts(authentication.getName(), pageable);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<Void> updateProfile(Authentication authentication, @RequestBody @Valid UpdateProfileRequest request) {
+        memberService.updateProfile(authentication.getName(), request.nickname(), request.email());
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/me/password")
+    public ResponseEntity<Void> changePassword(Authentication authentication, @RequestBody @Valid ChangePasswordRequest request) {
+        memberService.changePassword(authentication.getName(), request.currentPassword(), request.newPassword());
+        return ResponseEntity.ok().build();
     }
 }

@@ -32,5 +32,13 @@ public class Member {
         this.email = email;
     }
 
+    public void updateProfile(String nickname, String email) {
+        this.nickname = nickname;
+        this.email = email;
+    }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 
 }
