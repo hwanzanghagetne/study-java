@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByPostId(Long id);
 
+    void deleteByPostId(Long postId);
+
     @Query("SELECT c FROM Comment c JOIN FETCH c.member WHERE c.post.id = :postId")
     List<Comment> findByPostIdWithMember(@Param("postId") Long postId);
 }

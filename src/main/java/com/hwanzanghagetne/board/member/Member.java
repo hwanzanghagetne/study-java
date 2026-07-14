@@ -22,6 +22,11 @@ public class Member {
     private String name;
     private String nickname;
     private String email;
+    private boolean deleted;
+
+    public void withdraw() {
+        this.deleted = true;
+    }
 
     @Builder
     public Member(String loginId, String password, String name, String nickname, String email) {

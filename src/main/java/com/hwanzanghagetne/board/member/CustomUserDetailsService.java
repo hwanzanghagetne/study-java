@@ -22,6 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .username(member.getLoginId())
                 .password(member.getPassword())
                 .roles("USER")
+                .disabled(member.isDeleted())
                 .build();
     }
 }

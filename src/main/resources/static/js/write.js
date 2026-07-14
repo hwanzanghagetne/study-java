@@ -32,6 +32,19 @@ document
 
     if (response.ok) {
       const targetId = isEditMode ? postId : await response.json();
+
+      const fileInput = document.getElementById("fileInput");
+      if (fileInput.files.length > 0) {
+        const formData = new FormData();
+        for (const file of fileInput.files) {
+          formData.append("files", file);
+        }
+        await fetch(`/api/posts/${targetId}/files`, {
+          method: "POST",
+          body: formData,
+        });
+      }
+
       window.location.href = `post-detail.html?id=${targetId}`;
     } else {
       const error = await response.json();

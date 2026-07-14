@@ -61,4 +61,20 @@ document
     }
   });
 
+document.getElementById("withdrawBtn").addEventListener("click", async () => {
+  if (!confirm("정말 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+    return;
+  }
+
+  const response = await fetch("/api/members/me", { method: "DELETE" });
+
+  if (response.ok) {
+    window.location.href = "login.html";
+  } else {
+    const error = await response.json();
+    document.getElementById("withdrawMessage").textContent =
+      error.message || `탈퇴 실패 (상태코드: ${response.status})`;
+  }
+});
+
 loadProfile();

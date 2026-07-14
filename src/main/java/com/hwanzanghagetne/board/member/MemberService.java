@@ -60,4 +60,11 @@ public class MemberService {
         String encoded = passwordEncoder.encode(newPassword);
         member.changePassword(encoded);
     }
+
+    @Transactional
+    public void withdraw(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        member.withdraw();
+    }
 }

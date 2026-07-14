@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
   application:
     name: board
   datasource:
@@ -9,3 +13,5 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+file:
+    upload-dir: ./uploads

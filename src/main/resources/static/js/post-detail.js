@@ -25,6 +25,7 @@ async function loadPost() {
     if (myLoginId === post.authorLoginId) {
       document.getElementById("authorActions").style.display = "block";
       document.getElementById("editLink").href = `write.html?id=${postId}`;
+      document.getElementById("fileUploadForm").style.display = "block";
     }
   }
 }
@@ -124,4 +125,74 @@ document
     }
   });
 
-loadPost().then(loadComments);
+async function loadFiles() {
+  const response = await fetch(`/api/posts/${postId}/files`);
+
+  if (!response.ok) {
+    document.getElementById("fileMessage").textContent =
+      `첨부파일을 불러오지 못했습니다 (상태코드: ${response.status})`;
+    return;
+  }
+
+  const files = await response.json();
+  const fileList = document.getElementById("fileList");
+  fileList.innerHTML = "";
+
+  if (files.length === 0) {
+    fileList.innerHTML = "<li class=\"no-file\">첨부된 파일이 없습니다.</li>";
+    return;
+  }
+
+  files.forEach((file) => {
+    const li = document.createElement("li");
+    const fileUrl = `/api/files/${file.id}`;
+    const isImage = /\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(file.originalFileName);
+
+    if (isImage) {
+      li.innerHTML = `
+        <a href="${fileUrl}" target="_blank">
+          <img src="${fileUrl}" alt="${file.originalFileName}" class="file-thumbnail">
+        </a>
+        <span class="file-name">${file.originalFileName}</span>
+      `;
+    } else {
+      li.innerHTML = `<a href="${fileUrl}" target="_blank" class="file-name">${file.originalFileName}</a>`;
+    }
+
+    fileList.appendChild(li);
+  });
+}
+
+document
+  .getElementById("fileForm")
+  .addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const fileInput = document.getElementById("fileInput");
+    if (fileInput.files.length === 0) {
+      document.getElementById("fileMessage").textContent = "파일을 선택하세요.";
+      return;
+    }
+
+    const formData = new FormData();
+    for (const file of fileInput.files) {
+      formData.append("files", file);
+    }
+
+    const response = await fetch(`/api/posts/${postId}/files`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (response.ok) {
+      document.getElementById("fileMessage").textContent = "업로드 완료!";
+      fileInput.value = "";
+      loadFiles();
+    } else {
+      const error = await response.json();
+      document.getElementById("fileMessage").textContent =
+        error.message || `업로드 실패 (상태코드: ${response.status})`;
+    }
+  });
+
+loadPost().then(loadComments).then(loadFiles);

@@ -98,4 +98,16 @@ public class MemberController {
         memberService.changePassword(authentication.getName(), request.currentPassword(), request.newPassword());
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> withdraw(Authentication authentication, HttpServletRequest request) {
+        memberService.withdraw(authentication.getName());
+
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.noContent().build();
+    }
 }

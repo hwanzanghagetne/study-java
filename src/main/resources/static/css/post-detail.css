@@ -55,6 +55,66 @@ body {
     border-color: #c0392b;
 }
 
+.file-section {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.file-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
+
+#fileForm {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+#fileMessage {
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 0.5rem;
+}
+
+#fileList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.75rem 0;
+}
+
+#fileList li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+#fileList li.no-file {
+    color: #999;
+    border-bottom: none;
+}
+
+.file-thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+.file-name {
+    color: #333;
+    text-decoration: none;
+}
+
+.file-name:hover {
+    text-decoration: underline;
+}
+
 .comment-section h2 {
     font-size: 1.1rem;
     margin-bottom: 0.75rem;

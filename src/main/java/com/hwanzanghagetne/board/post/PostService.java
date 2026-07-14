@@ -1,10 +1,13 @@
 package com.hwanzanghagetne.board.post;
 
+import com.hwanzanghagetne.board.comment.CommentRepository;
 import com.hwanzanghagetne.board.exception.BusinessException;
 import com.hwanzanghagetne.board.exception.ErrorCode;
 import com.hwanzanghagetne.board.member.Member;
 import com.hwanzanghagetne.board.member.MemberRepository;
 import com.hwanzanghagetne.board.post.dto.PostResponse;
+import com.hwanzanghagetne.board.postfile.PostFileRepository;
+import com.hwanzanghagetne.board.postfile.PostFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +22,8 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-
+    private final CommentRepository commentRepository;
+    private final PostFileService postFileService;
 
     public Long createPost(String loginId, String title, String content) {
 
@@ -47,7 +51,7 @@ public class PostService {
                 post.getContent(),
                 post.getViewCount(),
                 post.getMember().getLoginId(),
-                post.getMember().getNickname(),
+                resolveNickname(post.getMember()),
                 post.getCreatedAt(),
                 post.getUpdatedAt()
         );
@@ -62,7 +66,7 @@ public class PostService {
                 post.getContent(),
                 post.getViewCount(),
                 post.getMember().getLoginId(),
-                post.getMember().getNickname(),
+                resolveNickname(post.getMember()),
                 post.getCreatedAt(),
                 post.getUpdatedAt()
         ));
@@ -87,6 +91,8 @@ public class PostService {
             throw new BusinessException(ErrorCode.NOT_AUTHOR);
         }
 
+        commentRepository.deleteByPostId(postId);
+        postFileService.deleteFilesByPost(postId);
         postRepository.delete(post);
     }
 
@@ -99,9 +105,13 @@ public class PostService {
                 post.getContent(),
                 post.getViewCount(),
                 post.getMember().getLoginId(),
-                post.getMember().getNickname(),
+                resolveNickname(post.getMember()),
                 post.getCreatedAt(),
                 post.getUpdatedAt()
         ));
+    }
+
+    private String resolveNickname(Member member) {
+        return member.isDeleted() ? "탈퇴한 회원" : member.getNickname();
     }
 }

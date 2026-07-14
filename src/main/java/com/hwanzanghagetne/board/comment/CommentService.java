@@ -46,11 +46,15 @@ public class CommentService {
                         comment.getId(),
                         comment.getContent(),
                         comment.getMember().getLoginId(),
-                        comment.getMember().getNickname(),
+                        resolveNickname(comment.getMember()),
                         comment.getCreatedAt()
                 ))
                 .toList();
 
+    }
+
+    private String resolveNickname(Member member) {
+        return member.isDeleted() ? "탈퇴한 회원" : member.getNickname();
     }
 
     @Transactional

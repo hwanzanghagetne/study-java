@@ -59,7 +59,18 @@ button {
 }
 
 #profileMessage,
-#passwordMessage {
+#passwordMessage,
+#withdrawMessage {
     font-size: 0.85rem;
     color: #555;
+}
+
+.withdraw-btn {
+    width: 100%;
+    padding: 0.5rem;
+    cursor: pointer;
+    background: white;
+    border: 1px solid #c0392b;
+    color: #c0392b;
+    border-radius: 4px;
 }
