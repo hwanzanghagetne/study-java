@@ -87,4 +87,15 @@ public class PostFileService {
         }
         postFileRepository.deleteAll(files);
     }
+
+    @Transactional
+    public void deleteFile(Long fileId, String loginId) {
+        PostFile postFile = postFileRepository.findById(fileId).orElseThrow(() -> new BusinessException(ErrorCode.FILE_NOT_FOUND));
+
+        if (!postFile.getPost().getMember().getLoginId().equals(loginId)) {
+            throw new BusinessException(ErrorCode.NOT_AUTHOR);
+        }
+        new File(postFile.getFilePath()).delete();
+        postFileRepository.delete(postFile);
+    }
 }

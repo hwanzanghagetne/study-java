@@ -1,5 +1,6 @@
 const postId = new URLSearchParams(window.location.search).get("id");
 let myLoginId = null;
+let isAuthor = false;
 
 async function loadPost() {
   const response = await fetch(`/api/posts/${postId}`);
@@ -23,6 +24,7 @@ async function loadPost() {
   if (meResponse.ok) {
     myLoginId = await meResponse.text();
     if (myLoginId === post.authorLoginId) {
+      isAuthor = true;
       document.getElementById("authorActions").style.display = "block";
       document.getElementById("editLink").href = `write.html?id=${postId}`;
       document.getElementById("fileUploadForm").style.display = "block";
@@ -148,18 +150,47 @@ async function loadFiles() {
     const fileUrl = `/api/files/${file.id}`;
     const isImage = /\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(file.originalFileName);
 
+    const deleteButtonHtml = isAuthor
+      ? `<button class="file-delete-btn" data-id="${file.id}">삭제</button>`
+      : "";
+
     if (isImage) {
       li.innerHTML = `
         <a href="${fileUrl}" target="_blank">
           <img src="${fileUrl}" alt="${file.originalFileName}" class="file-thumbnail">
         </a>
         <span class="file-name">${file.originalFileName}</span>
+        ${deleteButtonHtml}
       `;
     } else {
-      li.innerHTML = `<a href="${fileUrl}" target="_blank" class="file-name">${file.originalFileName}</a>`;
+      li.innerHTML = `
+        <a href="${fileUrl}" target="_blank" class="file-name">${file.originalFileName}</a>
+        ${deleteButtonHtml}
+      `;
     }
 
     fileList.appendChild(li);
+  });
+
+  document.querySelectorAll(".file-delete-btn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("파일을 삭제하시겠습니까?")) {
+        return;
+      }
+
+      const fileId = btn.dataset.id;
+      const response = await fetch(`/api/files/${fileId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        loadFiles();
+      } else {
+        const error = await response.json();
+        document.getElementById("fileMessage").textContent =
+          error.message || `파일 삭제 실패 (상태코드: ${response.status})`;
+      }
+    });
   });
 }
 

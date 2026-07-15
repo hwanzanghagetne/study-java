@@ -7,6 +7,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,5 +45,11 @@ public class PostFileController {
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
                 .body(resource);
+    }
+
+    @DeleteMapping("/api/files/{fileId}")
+    public ResponseEntity<Void> deleteFile(@PathVariable Long fileId, Authentication authentication) {
+        postFileService.deleteFile(fileId, authentication.getName());
+        return ResponseEntity.noContent().build();
     }
 }
