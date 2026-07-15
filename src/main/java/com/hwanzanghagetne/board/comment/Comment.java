@@ -46,4 +46,8 @@ public class Comment {
         this.post = post;
         this.member = member;
     }
+
+    public void updateComment(String content) {
+        this.content = content;
+    }
 }

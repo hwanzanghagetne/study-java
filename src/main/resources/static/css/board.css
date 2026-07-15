@@ -43,10 +43,37 @@ body {
     cursor: pointer;
 }
 
+.search-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.search-form select {
+    padding: 0.4rem;
+}
+
+.search-form input {
+    flex: 1;
+    padding: 0.4rem;
+    box-sizing: border-box;
+}
+
+.search-form button {
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+}
+
 ul {
     list-style: none;
     padding: 0;
     margin: 1.5rem 0;
+}
+
+li.no-post {
+    color: #999;
+    border-bottom: none;
+    text-align: center;
 }
 
 li {

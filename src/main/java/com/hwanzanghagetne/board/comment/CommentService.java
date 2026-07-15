@@ -1,6 +1,7 @@
 package com.hwanzanghagetne.board.comment;
 
 import com.hwanzanghagetne.board.comment.dto.CommentResponse;
+import com.hwanzanghagetne.board.comment.dto.MyCommentResponse;
 import com.hwanzanghagetne.board.exception.BusinessException;
 import com.hwanzanghagetne.board.exception.ErrorCode;
 import com.hwanzanghagetne.board.member.Member;
@@ -8,6 +9,8 @@ import com.hwanzanghagetne.board.member.MemberRepository;
 import com.hwanzanghagetne.board.post.Post;
 import com.hwanzanghagetne.board.post.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,8 +56,16 @@ public class CommentService {
 
     }
 
-    private String resolveNickname(Member member) {
-        return member.isDeleted() ? "탈퇴한 회원" : member.getNickname();
+    @Transactional(readOnly = true)
+    public Page<MyCommentResponse> getMyComments(String loginId, Pageable pageable) {
+        Page<Comment> myComments = commentRepository.findByMemberLoginIdWithPost(loginId, pageable);
+        return myComments.map(comment -> new MyCommentResponse(
+                comment.getId(),
+                comment.getContent(),
+                comment.getPost().getId(),
+                comment.getPost().getTitle(),
+                comment.getCreatedAt()
+        ));
     }
 
     @Transactional
@@ -65,4 +76,19 @@ public class CommentService {
         }
         commentRepository.delete(comment);
     }
+
+    @Transactional
+    public void updateComment(Long commentId, String loginId, String content) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_NOT_FOUND));
+        if (!comment.getMember().getLoginId().equals(loginId)) {
+            throw new BusinessException(ErrorCode.NOT_AUTHOR);
+        }
+        comment.updateComment(content);
+    }
+
+
+    private String resolveNickname(Member member) {
+        return member.isDeleted() ? "탈퇴한 회원" : member.getNickname();
+    }
+
 }

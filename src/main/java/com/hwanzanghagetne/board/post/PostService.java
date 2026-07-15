@@ -44,7 +44,6 @@ public class PostService {
     public PostResponse readPost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
-        post.increaseViewCount();
         return new PostResponse(
                 post.getId(),
                 post.getTitle(),
@@ -55,6 +54,13 @@ public class PostService {
                 post.getCreatedAt(),
                 post.getUpdatedAt()
         );
+    }
+
+    @Transactional
+    public void increaseViewCount(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
+        post.increaseViewCount();
     }
 
     @Transactional(readOnly = true)
@@ -99,6 +105,25 @@ public class PostService {
     @Transactional(readOnly = true)
     public Page<PostResponse> getMyPosts(String loginId, Pageable pageable) {
         Page<Post> posts = postRepository.findByMemberLoginId(loginId, pageable);
+        return posts.map(post -> new PostResponse(
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                post.getViewCount(),
+                post.getMember().getLoginId(),
+                resolveNickname(post.getMember()),
+                post.getCreatedAt(),
+                post.getUpdatedAt()
+        ));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PostResponse> searchPosts(String keyword, String searchType, Pageable pageable) {
+        Page<Post> posts = switch (searchType) {
+            case "title" -> postRepository.findByTitleContainingWithMember(keyword, pageable);
+            case "content" -> postRepository.findByContentContainingWithMember(keyword, pageable);
+            default -> postRepository.findByTitleContainingOrContentContainingWithMember(keyword, pageable);
+        };
         return posts.map(post -> new PostResponse(
                 post.getId(),
                 post.getTitle(),

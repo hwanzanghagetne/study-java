@@ -2,8 +2,12 @@ package com.hwanzanghagetne.board.comment;
 
 import com.hwanzanghagetne.board.comment.dto.CommentResponse;
 import com.hwanzanghagetne.board.comment.dto.CreateCommentRequest;
+import com.hwanzanghagetne.board.comment.dto.MyCommentResponse;
+import com.hwanzanghagetne.board.comment.dto.UpdateCommentRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -33,5 +37,16 @@ public class CommentController {
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId, Authentication authentication) {
         commentService.deleteComment(commentId, authentication.getName());
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/api/comments/{commentId}")
+    public ResponseEntity<Void> updateContent(@PathVariable Long commentId, Authentication authentication, @RequestBody @Valid UpdateCommentRequest request) {
+        commentService.updateComment(commentId, authentication.getName(), request.content());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/members/me/comments")
+    public Page<MyCommentResponse> getMyComments(Authentication authentication, Pageable pageable) {
+        return commentService.getMyComments(authentication.getName(), pageable);
     }
 }

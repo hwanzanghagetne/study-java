@@ -161,15 +161,63 @@ body {
     line-height: 1.4;
 }
 
-.comment-delete-btn {
+.comment-actions {
     margin-left: auto;
+    display: flex;
+    gap: 0.4rem;
+}
+
+.comment-edit-btn,
+.comment-delete-btn {
     padding: 0.15rem 0.5rem;
     font-size: 0.75rem;
     border: 1px solid #ccc;
     background: white;
-    color: #c0392b;
     border-radius: 4px;
     cursor: pointer;
+}
+
+.comment-edit-btn {
+    color: #333;
+}
+
+.comment-delete-btn {
+    color: #c0392b;
+}
+
+.comment-edit-form {
+    margin-top: 0.4rem;
+}
+
+.comment-edit-textarea {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.comment-edit-actions {
+    display: flex;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+}
+
+.comment-save-btn,
+.comment-cancel-btn {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background: white;
+}
+
+.comment-save-btn {
+    color: white;
+    background: #333;
+    border-color: #333;
 }
 
 #commentForm textarea {

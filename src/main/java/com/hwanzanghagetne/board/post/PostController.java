@@ -6,6 +6,7 @@ import com.hwanzanghagetne.board.comment.dto.CreateCommentRequest;
 import com.hwanzanghagetne.board.post.dto.CreatePostRequest;
 import com.hwanzanghagetne.board.post.dto.PostResponse;
 import com.hwanzanghagetne.board.post.dto.UpdatePostRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -33,13 +36,28 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponse> readPost(@PathVariable Long id) {
+    public ResponseEntity<PostResponse> readPost(@PathVariable Long id, HttpSession session) {
+        Set<Long> viewedPosts = (Set<Long>) session.getAttribute("viewedPosts");
+        if (viewedPosts == null) {
+            viewedPosts = new HashSet<>();
+            session.setAttribute("viewedPosts", viewedPosts);
+        }
+
+        if (!viewedPosts.contains(id)) {
+            postService.increaseViewCount(id);
+            viewedPosts.add(id);
+        }
         return ResponseEntity.ok(postService.readPost(id));
     }
 
     @GetMapping
-    public Page<PostResponse> getPosts(Pageable pageable) {
-        return postService.readPosts(pageable);
+    public Page<PostResponse> getPosts(@RequestParam(required = false) String keyword,
+                                       @RequestParam(required = false, defaultValue = "titleContent") String searchType,
+                                       Pageable pageable) {
+        if (keyword == null || keyword.isBlank()) {
+            return postService.readPosts(pageable);
+        }
+        return postService.searchPosts(keyword, searchType, pageable);
     }
 
     @PutMapping("/{id}")

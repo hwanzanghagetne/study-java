@@ -1,0 +1,49 @@
+body {
+    display: flex;
+    justify-content: center;
+    font-family: sans-serif;
+    background-color: #f0f0f0;
+    padding: 2rem 0;
+}
+
+.mypage-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: #555;
+    text-decoration: none;
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0 0;
+}
+
+.menu-list li {
+    border-bottom: 1px solid #eee;
+}
+
+.menu-list li:last-child {
+    border-bottom: none;
+}
+
+.menu-list a {
+    display: block;
+    padding: 1rem 0.25rem;
+    text-decoration: none;
+    color: #222;
+    font-weight: bold;
+}
+
+.menu-list a:hover {
+    background: #fafafa;
+}

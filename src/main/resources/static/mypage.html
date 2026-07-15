@@ -4,24 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>마이페이지</title>
-    <link rel="stylesheet" href="css/board.css">
+    <link rel="stylesheet" href="css/mypage.css">
 </head>
 <body>
-<div class="board-box">
-    <div class="board-header">
-        <h1>내가 쓴 글</h1>
-        <div class="header-actions">
-            <a href="board.html" class="write-link">목록으로</a>
-        </div>
-    </div>
-    <ul id="postList"></ul>
-    <p id="message"></p>
-    <div class="pager">
-        <button id="prevBtn">이전</button>
-        <span id="pageInfo"></span>
-        <button id="nextBtn">다음</button>
-    </div>
+<div class="mypage-box">
+    <a href="board.html" class="back-link">← 목록으로</a>
+    <h1>마이페이지</h1>
+    <ul class="menu-list">
+        <li><a href="profile.html">내 정보 수정</a></li>
+        <li><a href="my-posts.html">내가 쓴 글</a></li>
+        <li><a href="my-comments.html">내가 쓴 댓글</a></li>
+    </ul>
 </div>
-<script src="js/mypage.js"></script>
 </body>
 </html>

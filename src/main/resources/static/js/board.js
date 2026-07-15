@@ -1,7 +1,15 @@
 let currentPage = 0;
 
 async function loadPosts(page) {
-  const response = await fetch(`/api/posts?page=${page}&size=10&sort=createdAt,desc`);
+  const keyword = document.getElementById("keyword").value.trim();
+  const searchType = document.getElementById("searchType").value;
+
+  let url = `/api/posts?page=${page}&size=10&sort=createdAt,desc`;
+  if (keyword) {
+    url += `&keyword=${encodeURIComponent(keyword)}&searchType=${searchType}`;
+  }
+
+  const response = await fetch(url);
 
   if (!response.ok) {
     document.getElementById("message").textContent =
@@ -14,6 +22,10 @@ async function loadPosts(page) {
 
   const postList = document.getElementById("postList");
   postList.innerHTML = "";
+
+  if (pageData.content.length === 0) {
+    postList.innerHTML = "<li class=\"no-post\">검색 결과가 없습니다.</li>";
+  }
 
   pageData.content.forEach((post) => {
     const li = document.createElement("li");
@@ -37,6 +49,11 @@ document.getElementById("prevBtn").addEventListener("click", () => {
 
 document.getElementById("nextBtn").addEventListener("click", () => {
   loadPosts(currentPage + 1);
+});
+
+document.getElementById("searchForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  loadPosts(0);
 });
 
 document.getElementById("logoutBtn").addEventListener("click", async () => {

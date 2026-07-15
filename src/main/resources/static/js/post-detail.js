@@ -65,16 +65,23 @@ async function loadComments() {
     const createdAt = new Date(comment.createdAt).toLocaleString();
     const li = document.createElement("li");
 
-    const deleteButtonHtml =
-      comment.authorLoginId === myLoginId
-        ? `<button class="comment-delete-btn" data-id="${comment.id}">삭제</button>`
-        : "";
+    const isCommentAuthor = comment.authorLoginId === myLoginId;
+
+    const editButtonHtml = isCommentAuthor
+      ? `<button class="comment-edit-btn" data-id="${comment.id}">수정</button>`
+      : "";
+    const deleteButtonHtml = isCommentAuthor
+      ? `<button class="comment-delete-btn" data-id="${comment.id}">삭제</button>`
+      : "";
 
     li.innerHTML = `
       <div class="comment-header">
         <span class="comment-author">${comment.authorNickname}</span>
         <span class="comment-date">${createdAt}</span>
-        ${deleteButtonHtml}
+        <div class="comment-actions">
+          ${editButtonHtml}
+          ${deleteButtonHtml}
+        </div>
       </div>
       <p class="comment-content">${comment.content}</p>
     `;
@@ -99,6 +106,65 @@ async function loadComments() {
         document.getElementById("commentMessage").textContent =
           error.message || `댓글 삭제 실패 (상태코드: ${response.status})`;
       }
+    });
+  });
+
+  document.querySelectorAll(".comment-edit-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const commentId = btn.dataset.id;
+      const li = btn.closest("li");
+      const contentEl = li.querySelector(".comment-content");
+      const originalContent = contentEl.textContent;
+
+      const form = document.createElement("div");
+      form.className = "comment-edit-form";
+
+      const textarea = document.createElement("textarea");
+      textarea.className = "comment-edit-textarea";
+      textarea.value = originalContent;
+
+      const actions = document.createElement("div");
+      actions.className = "comment-edit-actions";
+
+      const saveBtn = document.createElement("button");
+      saveBtn.type = "button";
+      saveBtn.className = "comment-save-btn";
+      saveBtn.textContent = "저장";
+
+      const cancelBtn = document.createElement("button");
+      cancelBtn.type = "button";
+      cancelBtn.className = "comment-cancel-btn";
+      cancelBtn.textContent = "취소";
+
+      actions.appendChild(saveBtn);
+      actions.appendChild(cancelBtn);
+      form.appendChild(textarea);
+      form.appendChild(actions);
+
+      contentEl.replaceWith(form);
+      textarea.focus();
+
+      cancelBtn.addEventListener("click", () => {
+        loadComments();
+      });
+
+      saveBtn.addEventListener("click", async () => {
+        const newContent = textarea.value;
+
+        const response = await fetch(`/api/comments/${commentId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: newContent }),
+        });
+
+        if (response.ok) {
+          loadComments();
+        } else {
+          const error = await response.json();
+          document.getElementById("commentMessage").textContent =
+            error.message || `댓글 수정 실패 (상태코드: ${response.status})`;
+        }
+      });
     });
   });
 }
