@@ -64,6 +64,16 @@ body {
     cursor: pointer;
 }
 
+.sort-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.75rem;
+}
+
+.sort-bar select {
+    padding: 0.4rem;
+}
+
 ul {
     list-style: none;
     padding: 0;

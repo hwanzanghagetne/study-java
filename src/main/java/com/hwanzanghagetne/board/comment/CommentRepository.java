@@ -20,4 +20,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c FROM Comment c JOIN FETCH c.post WHERE c.member.loginId = :loginId")
     Page<Comment> findByMemberLoginIdWithPost(@Param("loginId") String loginId, Pageable pageable);
 
+    @Query("SELECT c.post.id, COUNT(c) FROM Comment c WHERE c.post.id IN :postIds GROUP BY c.post.id")
+    List<Object[]> countByPostIds(@Param("postIds") List<Long> postIds);
 }

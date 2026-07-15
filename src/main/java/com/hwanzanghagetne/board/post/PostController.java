@@ -53,9 +53,10 @@ public class PostController {
     @GetMapping
     public Page<PostResponse> getPosts(@RequestParam(required = false) String keyword,
                                        @RequestParam(required = false, defaultValue = "titleContent") String searchType,
+                                       @RequestParam(required = false) String sortType,
                                        Pageable pageable) {
         if (keyword == null || keyword.isBlank()) {
-            return postService.readPosts(pageable);
+            return postService.readPosts(sortType, pageable);
         }
         return postService.searchPosts(keyword, searchType, pageable);
     }

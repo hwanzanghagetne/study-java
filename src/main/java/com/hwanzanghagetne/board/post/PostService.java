@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +52,7 @@ public class PostService {
                 post.getTitle(),
                 post.getContent(),
                 post.getViewCount(),
+                commentRepository.findByPostId(id).size(),
                 post.getMember().getLoginId(),
                 resolveNickname(post.getMember()),
                 post.getCreatedAt(),
@@ -64,13 +68,22 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PostResponse> readPosts(Pageable pageable) {
-        Page<Post> posts = postRepository.findAllWithMember(pageable);
+    public Page<PostResponse> readPosts(String sortType, Pageable pageable) {
+        Page<Post> posts = "comments".equals(sortType)
+                ? postRepository.findAllOrderByCommentCountDesc(pageable)
+                : postRepository.findAllWithMember(pageable);
+
+        List<Long> postIds = posts.stream().map(Post::getId).toList();
+        Map<Long, Long> commentCounts =
+                commentRepository.countByPostIds(postIds).stream()
+                        .collect(Collectors.toMap(row -> (Long) row[0], row -> (Long) row[1]));
+
         return posts.map(post -> new PostResponse(
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
                 post.getViewCount(),
+                commentCounts.getOrDefault(post.getId(),0L).intValue(),
                 post.getMember().getLoginId(),
                 resolveNickname(post.getMember()),
                 post.getCreatedAt(),
@@ -105,11 +118,18 @@ public class PostService {
     @Transactional(readOnly = true)
     public Page<PostResponse> getMyPosts(String loginId, Pageable pageable) {
         Page<Post> posts = postRepository.findByMemberLoginId(loginId, pageable);
+
+        List<Long> postIds = posts.stream().map(Post::getId).toList();
+        Map<Long, Long> commentCounts =
+                commentRepository.countByPostIds(postIds).stream()
+                        .collect(Collectors.toMap(row -> (Long) row[0], row -> (Long) row[1]));
+
         return posts.map(post -> new PostResponse(
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
                 post.getViewCount(),
+                commentCounts.getOrDefault(post.getId(),0L).intValue(),
                 post.getMember().getLoginId(),
                 resolveNickname(post.getMember()),
                 post.getCreatedAt(),
@@ -124,11 +144,18 @@ public class PostService {
             case "content" -> postRepository.findByContentContainingWithMember(keyword, pageable);
             default -> postRepository.findByTitleContainingOrContentContainingWithMember(keyword, pageable);
         };
+
+        List<Long> postIds = posts.stream().map(Post::getId).toList();
+        Map<Long, Long> commentCounts =
+                commentRepository.countByPostIds(postIds).stream()
+                        .collect(Collectors.toMap(row -> (Long) row[0], row -> (Long) row[1]));
+
         return posts.map(post -> new PostResponse(
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
                 post.getViewCount(),
+                commentCounts.getOrDefault(post.getId(),0L).intValue(),
                 post.getMember().getLoginId(),
                 resolveNickname(post.getMember()),
                 post.getCreatedAt(),

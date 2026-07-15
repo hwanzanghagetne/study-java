@@ -7,6 +7,7 @@ public record PostResponse(
         String title,
         String content,
         int viewCount,
+        int commentCount,
         String authorLoginId,
         String authorNickname,
         LocalDateTime createdAt,

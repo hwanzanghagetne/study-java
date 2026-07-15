@@ -3,8 +3,17 @@ let currentPage = 0;
 async function loadPosts(page) {
   const keyword = document.getElementById("keyword").value.trim();
   const searchType = document.getElementById("searchType").value;
+  const sortType = document.getElementById("sortType").value;
 
-  let url = `/api/posts?page=${page}&size=10&sort=createdAt,desc`;
+  let url = `/api/posts?page=${page}&size=10`;
+  if (sortType === "comments") {
+    url += `&sortType=comments`;
+  } else if (sortType === "viewCount") {
+    url += `&sort=viewCount,desc`;
+  } else {
+    url += `&sort=createdAt,desc`;
+  }
+
   if (keyword) {
     url += `&keyword=${encodeURIComponent(keyword)}&searchType=${searchType}`;
   }
@@ -32,7 +41,7 @@ async function loadPosts(page) {
     const createdAt = new Date(post.createdAt).toLocaleString();
     li.innerHTML = `
       <a href="post-detail.html?id=${post.id}">${post.title}</a>
-      <span class="post-meta">${post.authorNickname} · 조회 ${post.viewCount} · ${createdAt}</span>
+      <span class="post-meta">${post.authorNickname} · 조회 ${post.viewCount} · 댓글 ${post.commentCount} · ${createdAt}</span>
     `;
     postList.appendChild(li);
   });
@@ -53,6 +62,10 @@ document.getElementById("nextBtn").addEventListener("click", () => {
 
 document.getElementById("searchForm").addEventListener("submit", (event) => {
   event.preventDefault();
+  loadPosts(0);
+});
+
+document.getElementById("sortType").addEventListener("change", () => {
   loadPosts(0);
 });
 

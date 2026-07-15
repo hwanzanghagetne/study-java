@@ -21,4 +21,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p JOIN FETCH p.member WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword%")
     Page<Post> findByTitleContainingOrContentContainingWithMember(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query(value = "SELECT p FROM Post p JOIN FETCH p.member LEFT JOIN Comment c ON c.post = p GROUP BY p ORDER BY COUNT(c) DESC", countQuery = "SELECT COUNT(p) FROM Post p")
+    Page<Post> findAllOrderByCommentCountDesc(Pageable pageable);
 }
