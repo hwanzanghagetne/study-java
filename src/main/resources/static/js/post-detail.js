@@ -48,6 +48,43 @@ document.getElementById("deleteBtn").addEventListener("click", async () => {
   }
 });
 
+function buildCommentHtml(comment, isReply) {
+  const createdAt = new Date(comment.createdAt).toLocaleString();
+  const isCommentAuthor = comment.authorLoginId === myLoginId;
+
+  const replyButtonHtml = isReply
+    ? ""
+    : `<button class="comment-reply-btn" data-id="${comment.id}">답글</button>`;
+  const editButtonHtml = isCommentAuthor
+    ? `<button class="comment-edit-btn" data-id="${comment.id}">수정</button>`
+    : "";
+  const deleteButtonHtml = isCommentAuthor
+    ? `<button class="comment-delete-btn" data-id="${comment.id}">삭제</button>`
+    : "";
+
+  const replies = comment.replies || [];
+  const repliesHtml =
+    replies.length > 0
+      ? `<ul class="reply-list">${replies.map((reply) => buildCommentHtml(reply, true)).join("")}</ul>`
+      : "";
+
+  return `
+    <li class="${isReply ? "reply-item" : ""}">
+      <div class="comment-header">
+        <span class="comment-author">${comment.authorNickname}</span>
+        <span class="comment-date">${createdAt}</span>
+        <div class="comment-actions">
+          ${replyButtonHtml}
+          ${editButtonHtml}
+          ${deleteButtonHtml}
+        </div>
+      </div>
+      <p class="comment-content">${comment.content}</p>
+      ${repliesHtml}
+    </li>
+  `;
+}
+
 async function loadComments() {
   const response = await fetch(`/api/posts/${postId}/comments`);
 
@@ -59,34 +96,7 @@ async function loadComments() {
 
   const comments = await response.json();
   const commentList = document.getElementById("commentList");
-  commentList.innerHTML = "";
-
-  comments.forEach((comment) => {
-    const createdAt = new Date(comment.createdAt).toLocaleString();
-    const li = document.createElement("li");
-
-    const isCommentAuthor = comment.authorLoginId === myLoginId;
-
-    const editButtonHtml = isCommentAuthor
-      ? `<button class="comment-edit-btn" data-id="${comment.id}">수정</button>`
-      : "";
-    const deleteButtonHtml = isCommentAuthor
-      ? `<button class="comment-delete-btn" data-id="${comment.id}">삭제</button>`
-      : "";
-
-    li.innerHTML = `
-      <div class="comment-header">
-        <span class="comment-author">${comment.authorNickname}</span>
-        <span class="comment-date">${createdAt}</span>
-        <div class="comment-actions">
-          ${editButtonHtml}
-          ${deleteButtonHtml}
-        </div>
-      </div>
-      <p class="comment-content">${comment.content}</p>
-    `;
-    commentList.appendChild(li);
-  });
+  commentList.innerHTML = comments.map((comment) => buildCommentHtml(comment, false)).join("");
 
   document.querySelectorAll(".comment-delete-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
@@ -163,6 +173,73 @@ async function loadComments() {
           const error = await response.json();
           document.getElementById("commentMessage").textContent =
             error.message || `댓글 수정 실패 (상태코드: ${response.status})`;
+        }
+      });
+    });
+  });
+
+  document.querySelectorAll(".comment-reply-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const parentId = btn.dataset.id;
+      const li = btn.closest("li");
+
+      const existingForm = li.querySelector(".reply-form");
+      if (existingForm) {
+        existingForm.remove();
+        return;
+      }
+
+      const form = document.createElement("div");
+      form.className = "reply-form";
+
+      const textarea = document.createElement("textarea");
+      textarea.className = "reply-textarea";
+      textarea.placeholder = "답글을 입력하세요";
+
+      const actions = document.createElement("div");
+      actions.className = "reply-actions";
+
+      const submitBtn = document.createElement("button");
+      submitBtn.type = "button";
+      submitBtn.className = "reply-submit-btn";
+      submitBtn.textContent = "등록";
+
+      const cancelBtn = document.createElement("button");
+      cancelBtn.type = "button";
+      cancelBtn.className = "reply-cancel-btn";
+      cancelBtn.textContent = "취소";
+
+      actions.appendChild(submitBtn);
+      actions.appendChild(cancelBtn);
+      form.appendChild(textarea);
+      form.appendChild(actions);
+
+      const contentEl = li.querySelector(".comment-content");
+      contentEl.insertAdjacentElement("afterend", form);
+      textarea.focus();
+
+      cancelBtn.addEventListener("click", () => {
+        form.remove();
+      });
+
+      submitBtn.addEventListener("click", async () => {
+        const content = textarea.value.trim();
+        if (!content) {
+          return;
+        }
+
+        const response = await fetch(`/api/posts/${postId}/comments`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content, parentId: Number(parentId) }),
+        });
+
+        if (response.ok) {
+          loadComments();
+        } else {
+          const error = await response.json();
+          document.getElementById("commentMessage").textContent =
+            error.message || `답글 작성 실패 (상태코드: ${response.status})`;
         }
       });
     });

@@ -3,6 +3,7 @@ package com.hwanzanghagetne.board.comment.dto;
 import jakarta.validation.constraints.NotBlank;
 
 public record CreateCommentRequest(
-        @NotBlank String content
+        @NotBlank String content,
+        Long parentId
 ) {
 }
