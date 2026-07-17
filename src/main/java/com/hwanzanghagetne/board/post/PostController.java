@@ -69,7 +69,9 @@ public class PostController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id, Authentication authentication) {
-        postService.deletePost(id, authentication.getName());
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        postService.deletePost(id, authentication.getName(),isAdmin);
         return ResponseEntity.noContent().build();
     }
 

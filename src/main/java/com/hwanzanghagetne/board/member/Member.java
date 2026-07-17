@@ -24,6 +24,9 @@ public class Member {
     private String email;
     private boolean deleted;
 
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
+
     public void withdraw() {
         this.deleted = true;
     }

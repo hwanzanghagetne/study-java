@@ -35,7 +35,10 @@ public class CommentController {
 
     @DeleteMapping("/api/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId, Authentication authentication) {
-        commentService.deleteComment(commentId, authentication.getName());
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        commentService.deleteComment(commentId, authentication.getName(),isAdmin);
         return ResponseEntity.noContent().build();
     }
 

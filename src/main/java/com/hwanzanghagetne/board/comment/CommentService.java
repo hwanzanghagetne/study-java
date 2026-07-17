@@ -91,9 +91,9 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId, String loginId) {
+    public void deleteComment(Long commentId, String loginId, boolean isAdmin) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_NOT_FOUND));
-        if (!comment.getMember().getLoginId().equals(loginId)) {
+        if (!isAdmin  && !comment.getMember().getLoginId().equals(loginId)) {
             throw new BusinessException(ErrorCode.NOT_AUTHOR);
         }
         commentRepository.deleteByParentId(commentId);

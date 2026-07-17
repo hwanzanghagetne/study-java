@@ -8,6 +8,7 @@ import com.hwanzanghagetne.board.member.MemberRepository;
 import com.hwanzanghagetne.board.post.dto.PostResponse;
 import com.hwanzanghagetne.board.postfile.PostFileRepository;
 import com.hwanzanghagetne.board.postfile.PostFileService;
+import com.hwanzanghagetne.board.postlike.PostLikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final PostFileService postFileService;
+    private final PostLikeRepository postLikeRepository;
 
     public Long createPost(String loginId, String title, String content) {
 
@@ -103,14 +105,15 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(Long postId, String loginId) {
+    public void deletePost(Long postId, String loginId, boolean isAdmin) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new BusinessException(ErrorCode.POST_NOT_FOUND));
 
-        if (!post.getMember().getLoginId().equals(loginId)) {
+        if (!isAdmin && !post.getMember().getLoginId().equals(loginId)) {
             throw new BusinessException(ErrorCode.NOT_AUTHOR);
         }
 
         commentRepository.deleteByPostId(postId);
+        postLikeRepository.deleteByPostId(postId);
         postFileService.deleteFilesByPost(postId);
         postRepository.delete(post);
     }

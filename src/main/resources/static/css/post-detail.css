@@ -32,6 +32,33 @@ body {
     line-height: 1.5;
 }
 
+.like-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.like-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background: white;
+    color: #333;
+}
+
+.like-btn.liked {
+    border-color: #c0392b;
+    color: #c0392b;
+}
+
+.like-count {
+    font-size: 0.85rem;
+    color: #888;
+}
+
 .author-actions {
     display: flex;
     gap: 0.5rem;

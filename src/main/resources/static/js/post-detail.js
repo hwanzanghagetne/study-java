@@ -32,6 +32,36 @@ async function loadPost() {
   }
 }
 
+async function loadLikeStatus() {
+  const response = await fetch(`/api/posts/${postId}/likes`);
+
+  if (!response.ok) {
+    return;
+  }
+
+  const { liked, likeCount } = await response.json();
+
+  const likeBtn = document.getElementById("likeBtn");
+  likeBtn.textContent = liked ? "❤️ 좋아요 취소" : "🤍 좋아요";
+  likeBtn.classList.toggle("liked", liked);
+  document.getElementById("likeCount").textContent = likeCount;
+}
+
+document.getElementById("likeBtn").addEventListener("click", async () => {
+  const liked = document.getElementById("likeBtn").classList.contains("liked");
+
+  const response = await fetch(`/api/posts/${postId}/likes`, {
+    method: liked ? "DELETE" : "PUT",
+  });
+
+  if (response.ok) {
+    loadLikeStatus();
+  } else {
+    document.getElementById("message").textContent =
+      `좋아요 처리에 실패했습니다 (상태코드: ${response.status})`;
+  }
+});
+
 document.getElementById("deleteBtn").addEventListener("click", async () => {
   if (!confirm("정말 삭제하시겠습니까?")) {
     return;
@@ -369,4 +399,4 @@ document
     }
   });
 
-loadPost().then(loadComments).then(loadFiles);
+loadPost().then(loadComments).then(loadFiles).then(loadLikeStatus);
