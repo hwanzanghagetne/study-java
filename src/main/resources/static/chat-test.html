@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>채팅 연결 테스트</title>
+    <link rel="stylesheet" href="css/chat-test.css">
+</head>
+<body>
+<div class="chat-test-box">
+    <a href="board.html" class="back-link">← 목록으로</a>
+    <h1>WebSocket/STOMP 연결 테스트</h1>
+    <p id="status" class="status">연결 중...</p>
+
+    <ul id="messageLog"></ul>
+
+    <form id="sendForm">
+        <input type="text" id="messageInput" placeholder="메시지를 입력하세요" required>
+        <button type="submit">전송</button>
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+<script src="js/chat-test.js"></script>
+</body>
+</html>

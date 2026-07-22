@@ -10,7 +10,8 @@ public enum ErrorCode {
     DUPLICATE_LOGIN_ID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "현재 비밀번호가 일치하지 않습니다."),
     FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다."),
-    CANNOT_REPLY_TO_REPLY(HttpStatus.BAD_REQUEST, "답글에는 답글을 달 수 없습니다.");
+    CANNOT_REPLY_TO_REPLY(HttpStatus.BAD_REQUEST, "답글에는 답글을 달 수 없습니다."),
+    CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;
