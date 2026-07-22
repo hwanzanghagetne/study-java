@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ChatRoomService {
@@ -46,4 +48,28 @@ public class ChatRoomService {
 
         return savedRoom.getId();
     }
+
+    @Transactional
+    public Long createGroupRoom(Long creatorId, List<String> memberLoginIds) {
+        ChatRoom chatRoom = ChatRoom.builder()
+                .roomType(RoomType.GROUP)
+                .build();
+
+        ChatRoom savedRoom = chatRoomRepository.save(chatRoom);
+
+        Member creator = memberRepository.findById(creatorId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+
+        chatRoomMemberRepository.save(ChatRoomMember.builder().chatRoom(savedRoom).member(creator).build());
+
+        for (String loginId : memberLoginIds) {
+            Member member = memberRepository.findByLoginId(loginId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+
+            if (member.getId().equals(creatorId)) {
+                continue;
+            }
+            chatRoomMemberRepository.save(ChatRoomMember.builder().chatRoom(savedRoom).member(member).build());
+        }
+        return savedRoom.getId();
+    }
+
 }

@@ -27,6 +27,36 @@ body {
     color: #888;
 }
 
+.room-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.room-section input {
+    flex: 1;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+
+.room-section button {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+#roomIdDisplay {
+    font-size: 0.85rem;
+    color: #555;
+    white-space: nowrap;
+}
+
+#loadHistoryBtn {
+    margin-top: 0.75rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
 #messageLog {
     list-style: none;
     padding: 0;

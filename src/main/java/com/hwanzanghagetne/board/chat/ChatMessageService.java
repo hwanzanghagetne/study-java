@@ -9,12 +9,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final MemberRepository memberRepository;
 
     @Transactional
@@ -39,5 +42,26 @@ public class ChatMessageService {
                 saved.getContent(),
                 saved.getCreatedAt()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChatMessageResponse> getMessage(Long roomId, Long requestId) {
+        boolean isMember = chatRoomMemberRepository.existsByChatRoomIdAndMemberId(roomId, requestId);
+        if (!isMember) {
+            throw new BusinessException(ErrorCode.NOT_CHAT_ROOM_MEMBER);
+        }
+
+        List<ChatMessage> message = chatMessageRepository.findByChatRoomIdWithMember(roomId);
+
+        return message.stream()
+                .map(m -> new ChatMessageResponse(
+                        m.getId(),
+                        roomId,
+                        m.getMember().getLoginId(),
+                        m.getMember().getNickname(),
+                        m.getContent(),
+                        m.getCreatedAt()
+                ))
+                .toList();
     }
 }

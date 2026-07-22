@@ -24,6 +24,7 @@ public class ChatRoom {
     @Enumerated(EnumType.STRING)
     private RoomType roomType;
 
+    private String title;
     private Long member1Id;
     private Long member2Id;
 
@@ -32,8 +33,9 @@ public class ChatRoom {
     private LocalDateTime createdAt;
 
     @Builder
-    public ChatRoom(RoomType roomType, Long member1Id, Long member2Id) {
+    public ChatRoom(RoomType roomType,String title, Long member1Id, Long member2Id) {
         this.roomType = roomType;
+        this.title = title;
         this.member1Id = member1Id;
         this.member2Id = member2Id;
     }
