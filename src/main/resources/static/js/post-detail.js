@@ -50,7 +50,7 @@ async function loadLikeStatus() {
 document.getElementById("likeBtn").addEventListener("click", async () => {
   const liked = document.getElementById("likeBtn").classList.contains("liked");
 
-  const response = await fetch(`/api/posts/${postId}/likes`, {
+  const response = await fetchWithCsrf(`/api/posts/${postId}/likes`, {
     method: liked ? "DELETE" : "PUT",
   });
 
@@ -67,7 +67,7 @@ document.getElementById("deleteBtn").addEventListener("click", async () => {
     return;
   }
 
-  const response = await fetch(`/api/posts/${postId}`, { method: "DELETE" });
+  const response = await fetchWithCsrf(`/api/posts/${postId}`, { method: "DELETE" });
 
   if (response.ok) {
     window.location.href = "board.html";
@@ -135,7 +135,7 @@ async function loadComments() {
       }
 
       const commentId = btn.dataset.id;
-      const response = await fetch(`/api/comments/${commentId}`, {
+      const response = await fetchWithCsrf(`/api/comments/${commentId}`, {
         method: "DELETE",
       });
 
@@ -191,7 +191,7 @@ async function loadComments() {
       saveBtn.addEventListener("click", async () => {
         const newContent = textarea.value;
 
-        const response = await fetch(`/api/comments/${commentId}`, {
+        const response = await fetchWithCsrf(`/api/comments/${commentId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content: newContent }),
@@ -258,7 +258,7 @@ async function loadComments() {
           return;
         }
 
-        const response = await fetch(`/api/posts/${postId}/comments`, {
+        const response = await fetchWithCsrf(`/api/posts/${postId}/comments`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content, parentId: Number(parentId) }),
@@ -283,7 +283,7 @@ document
 
     const content = document.getElementById("commentContent").value;
 
-    const response = await fetch(`/api/posts/${postId}/comments`, {
+    const response = await fetchWithCsrf(`/api/posts/${postId}/comments`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content }),
@@ -352,7 +352,7 @@ async function loadFiles() {
       }
 
       const fileId = btn.dataset.id;
-      const response = await fetch(`/api/files/${fileId}`, {
+      const response = await fetchWithCsrf(`/api/files/${fileId}`, {
         method: "DELETE",
       });
 
@@ -383,7 +383,7 @@ document
       formData.append("files", file);
     }
 
-    const response = await fetch(`/api/posts/${postId}/files`, {
+    const response = await fetchWithCsrf(`/api/posts/${postId}/files`, {
       method: "POST",
       body: formData,
     });

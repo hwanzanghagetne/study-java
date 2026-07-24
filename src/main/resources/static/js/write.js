@@ -21,7 +21,7 @@ document
     const title = document.getElementById("title").value;
     const content = document.getElementById("content").value;
 
-    const response = await fetch(
+    const response = await fetchWithCsrf(
       isEditMode ? `/api/posts/${postId}` : "/api/posts",
       {
         method: isEditMode ? "PUT" : "POST",
@@ -39,7 +39,7 @@ document
         for (const file of fileInput.files) {
           formData.append("files", file);
         }
-        await fetch(`/api/posts/${targetId}/files`, {
+        await fetchWithCsrf(`/api/posts/${targetId}/files`, {
           method: "POST",
           body: formData,
         });

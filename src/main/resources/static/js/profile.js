@@ -21,7 +21,7 @@ document
     const nickname = document.getElementById("nickname").value;
     const email = document.getElementById("email").value;
 
-    const response = await fetch("/api/members/me", {
+    const response = await fetchWithCsrf("/api/members/me", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nickname, email }),
@@ -44,7 +44,7 @@ document
     const currentPassword = document.getElementById("currentPassword").value;
     const newPassword = document.getElementById("newPassword").value;
 
-    const response = await fetch("/api/members/me/password", {
+    const response = await fetchWithCsrf("/api/members/me/password", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ currentPassword, newPassword }),
@@ -66,7 +66,7 @@ document.getElementById("withdrawBtn").addEventListener("click", async () => {
     return;
   }
 
-  const response = await fetch("/api/members/me", { method: "DELETE" });
+  const response = await fetchWithCsrf("/api/members/me", { method: "DELETE" });
 
   if (response.ok) {
     window.location.href = "login.html";

@@ -12,7 +12,7 @@ function logMessage(text) {
 }
 
 const client = new StompJs.Client({
-  brokerURL: `ws://${window.location.host}/ws`,
+  brokerURL: `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`,
   onConnect: () => {
     statusEl.textContent = "연결됨";
   },
@@ -24,12 +24,31 @@ const client = new StompJs.Client({
   },
 });
 
-client.activate();
+async function activateClient() {
+  try {
+    const response = await fetch("/api/csrf", {
+      credentials: "same-origin",
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`CSRF 토큰 조회 실패: ${response.status}`);
+    }
+
+    const csrf = await response.json();
+    client.connectHeaders = { [csrf.headerName]: csrf.token };
+    client.activate();
+  } catch (error) {
+    statusEl.textContent = `연결 실패: ${error.message}`;
+  }
+}
+
+activateClient();
 
 document.getElementById("createRoomBtn").addEventListener("click", async () => {
   const targetLoginId = document.getElementById("targetLoginId").value;
 
-  const response = await fetch("/api/chat/rooms/direct", {
+  const response = await fetchWithCsrf("/api/chat/rooms/direct", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "same-origin",

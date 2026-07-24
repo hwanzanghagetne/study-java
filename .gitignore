@@ -38,3 +38,6 @@ out/
 
 ### Study notes (local only) ###
 docs/
+
+### Agent tool config (local only) ###
+AGENTS.md

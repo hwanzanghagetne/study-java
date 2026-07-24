@@ -70,7 +70,7 @@ document.getElementById("sortType").addEventListener("change", () => {
 });
 
 document.getElementById("logoutBtn").addEventListener("click", async () => {
-  await fetch("/api/members/logout", { method: "POST" });
+  await fetchWithCsrf("/api/members/logout", { method: "POST" });
   window.location.href = "login.html";
 });
 

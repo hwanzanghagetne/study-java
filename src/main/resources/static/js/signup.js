@@ -9,7 +9,7 @@ document
     const nickname = document.getElementById("nickname").value;
     const email = document.getElementById("email").value;
 
-    const response = await fetch("/api/members/signup", {
+    const response = await fetchWithCsrf("/api/members/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ loginId, password, name, nickname, email }),
